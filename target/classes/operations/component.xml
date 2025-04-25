@@ -1,0 +1,51 @@
+<component name="operations" type="synapse/template">
+  <subComponents>
+    <component name="executeQuery">
+      <displayName>Execute Query</displayName>
+      <file>executeQuery.xml</file>
+      <description>Execute database query</description>
+    </component>
+    <component name="select">
+      <displayName>Select</displayName>
+      <file>select.xml</file>
+      <description>Select query</description>
+    </component>
+    <component name="insert">
+      <displayName>Insert</displayName>
+      <file>insert.xml</file>
+      <description>Insert query</description>
+    </component>
+    <component name="update">
+      <displayName>Update</displayName>
+      <file>update.xml</file>
+      <description>Update query</description>
+    </component>
+    <component name="delete">
+      <displayName>Delete</displayName>
+      <file>delete.xml</file>
+      <description>Delete query</description>
+    </component>
+    <component name="call">
+      <displayName>Stored Procedure</displayName>
+      <file>call.xml</file>
+      <description>Stored procedure</description>
+    </component>
+
+    <!-- transactions -->
+    <component name="beginTransaction">
+      <displayName>Begin Transaction</displayName>
+      <file>beginTransaction.xml</file>
+      <description>Begin transaction</description>
+    </component>
+    <component name="commitTransaction">
+      <displayName>Commit Transaction</displayName>
+      <file>commitTransaction.xml</file>
+      <description>Commit transaction</description>
+    </component>
+    <component name="rollbackTransaction">
+      <displayName>Rollback Transaction</displayName>
+      <file>rollbackTransaction.xml</file>
+      <description>Rollback transaction</description>
+    </component>
+  </subComponents>
+</component>
