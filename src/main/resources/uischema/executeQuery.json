@@ -42,7 +42,7 @@
                     "defaultValue": "",
                     "required": "true",
                     "parentField": "table",
-                    "helpTip": "Query to execute"
+                    "helpTip": "Specifies the database query to be executed. Although this field accepts raw SQL, it is executed internally as a prepared statement with the parameters. This approach prevents SQL injection vulnerabilities, so manual sanitization is not required."
                   }
                 },
                 {
