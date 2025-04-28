@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -34,19 +34,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.axiom.om.OMElement;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.synapse.MessageContext;
 import org.apache.synapse.util.InlineExpressionUtil;
 import org.apache.synapse.util.xpath.SynapseExpression;
-
 import org.jaxen.JaxenException;
 import org.json.JSONArray;
 import org.json.JSONException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.wso2.carbon.connector.core.AbstractConnector;
 import org.wso2.carbon.connector.core.ConnectException;
 import org.wso2.carbon.connector.core.connection.ConnectionHandler;
@@ -80,6 +79,9 @@ public class ExecuteQuery extends AbstractConnector {
     private boolean isNewTransaction = false; // if a new transaction is started
     private boolean isNewConnection = false; // if a new connection is created
     private boolean isOngoingTransaction = false; // if a transaction is already in progress
+
+    private String responseVariable = null;
+    private boolean overwriteBody = false;
 
     private final Map<String, SynapseExpression> inlineExpressionCache = new ConcurrentHashMap<>();
 
@@ -155,6 +157,22 @@ public class ExecuteQuery extends AbstractConnector {
         this.parameters = parameters;
     }
 
+    public String getResponseVariable() {
+        return responseVariable;
+    }
+
+    public void setResponseVariable(String responseVariable) {
+        this.responseVariable = responseVariable;
+    }
+
+    public boolean isOverwriteBody() {
+        return overwriteBody;
+    }
+
+    public void setOverwriteBody(boolean overwriteBody) {
+        this.overwriteBody = overwriteBody;
+    }
+
     @Override
     public void connect(MessageContext messageContext) throws ConnectException {
 
@@ -183,6 +201,9 @@ public class ExecuteQuery extends AbstractConnector {
         String isPreparedStatement = (String) getParameter(messageContext, Constants.IS_PREPARED_STATEMENT);
         String isResultSet = (String) getParameter(messageContext, Constants.IS_RESULT_SET);
 
+        String responseVariable = (String) getParameter(messageContext, Constants.RESPONSE_VARIABLE);
+        Boolean overwriteBody = Boolean.parseBoolean((String) getParameter(messageContext, Constants.OVERWRITE_BODY));
+
         Connection conn = null;
         DBHandler dbHandlerConnection = null;
         ConnectionHandler handler = ConnectionHandler.getConnectionHandler();
@@ -191,7 +212,7 @@ public class ExecuteQuery extends AbstractConnector {
         boolean isSelect = false;
         boolean querySuccess = false;
 
-        // TODO handle mutiple queries in a single stetmen
+        JsonObject resultJSON = new JsonObject();
 
         try {
             dbHandlerConnection = prepareTransactionEnvironment(messageContext, handler, connectionName,
@@ -250,7 +271,6 @@ public class ExecuteQuery extends AbstractConnector {
             Statement stmnt = null;
             try {
                 if (StringUtils.isEmpty(preparedStmt)) {
-                    // query = InlineExpressionUtil.replaceDynamicValues(messageContext, query);
                     query = processExpression(query, messageContext);
                     stmnt = new Statement(query);
                 } else {
@@ -310,11 +330,9 @@ public class ExecuteQuery extends AbstractConnector {
                         "Error processing statement parameters: " + e.getMessage());
             }
 
-            Object result = null;
             try (PreparedStatement ps = getPreparedStatement(conn, stmnt)) {
 
                 // Set query parameters
-                // ps.setMaxRows(Integer.parseInt(maxRows));
                 setIntProperty(ps, "setQueryTimeout", queryTimeout);
                 setIntProperty(ps, "setFetchSize", fetchSize);
                 setIntProperty(ps, "setMaxRows", maxRows);
@@ -322,45 +340,58 @@ public class ExecuteQuery extends AbstractConnector {
                 if (isSelect) {
                     try (ResultSet rs = ps.executeQuery()) {
                         if (!rs.isBeforeFirst()) {
-                            log.info("No results found for query: " + query);
+                            log.debug("No results found for query: " + query);
                         } else {
-                            ResultSetMapper resultSetMapper = new ResultSetMapper();
-                            result = resultSetMapper.mapToFormat(rs, ResultSetMapper.getTargetFormat(messageContext));
-                            log.info("Result: " + result);
+                            JsonArray rows = ResultSetMapper.mapResultSetToJsonArray(rs);
+                            resultJSON.add("rows", rows);
+                            log.debug("Result: " + rows);
                         }
                     }
+                } else if (operation.equalsIgnoreCase(Constants.OPERATION_CALL)) {
+                    boolean hasResultSet = ps.execute();
+                    JsonArray resultSets = new JsonArray();
+
+                    if (hasResultSet) {
+                        try (ResultSet rs = ps.getResultSet()) {
+                            JsonArray rows = ResultSetMapper.mapResultSetToJsonArray(rs);
+                            resultSets.add(rows);
+                            log.debug("Result Set 1: " + rows);
+                        }
+                    }
+
+                    if (resultSets.size() > 0) {
+                        resultJSON.add("resultSets", resultSets);
+                    }
+
+                    int updateCount = ps.getUpdateCount();
+                    resultJSON.addProperty("updateCount", updateCount);
+                    log.debug("Update count: " + updateCount);
+
                 } else {
                     int affected = ps.executeUpdate();
-                    result = affected;
-                    log.info("Affected rows: " + affected);
+                    resultJSON.addProperty("affectedRows", affected);
+                    log.debug("Affected rows: " + affected);
 
                     // if insert get the last inserted id
                     if (operation.equalsIgnoreCase(Constants.OPERATION_INSERT)) {
-                        try (ResultSet rs = ps.getGeneratedKeys()) {
-                            if (rs.next()) {
-                                result = rs.getLong(1);
-                                log.info("Last inserted id: " + result);
+                        if (conn.getMetaData().supportsGetGeneratedKeys()) {
+                            try (ResultSet rs = ps.getGeneratedKeys()) {
+                                JsonArray generatedKeys = ResultSetMapper.mapResultSetToJsonArray(rs);
+                                resultJSON.add("generatedKeys", generatedKeys);
+                                log.debug("Generated keys: " + generatedKeys);
+                            } catch (SQLException e) {
+                                log.warn("Could not retrieve generated keys: " + e.getMessage());
+                                resultJSON.add("generatedKeys", new JsonArray());
                             }
+                        } else {
+                            log.warn("Driver does not support retrieving generated keys.");
+                            resultJSON.add("generatedKeys", new JsonArray());
                         }
                     }
                 }
             }
 
-            if (!StringUtils.isEmpty(includeResultTo)) {
-                if (includeResultTo.equalsIgnoreCase(Constants.MESSAGE_BODY)) {
-                    Utils.setResultAsPayload(messageContext, operation, result);
-                } else if (includeResultTo.equalsIgnoreCase(Constants.MESSAGE_PROPERTY)) {
-                    // messageContext.setProperty(resultPropertyName, result);
-                    OMElement resultEle = Utils.generateOperationResult(messageContext, operation, result);
-                    messageContext.setProperty(resultPropertyName, resultEle);
-
-                    log.info("Result:" + resultEle.toString());
-                } else {
-                    throw new InvalidConfigurationException("Invalid includeResultTo value: " + includeResultTo);
-                }
-            }
-
-            querySuccess = true;
+            Utils.handleConnectorResponse(messageContext, responseVariable, overwriteBody, resultJSON, null);
 
         } catch (SQLSyntaxErrorException e) {
             handleError(messageContext, e, Error.SQL_SYNTAX_ERROR, "Error executing query: " + e.getMessage());
@@ -377,20 +408,20 @@ public class ExecuteQuery extends AbstractConnector {
 
             try {
                 if (querySuccess) {
-                    log.info("Query Successful");
+                    log.debug("Query Successful");
                     if (isNewTransaction) {
                         dbHandlerConnection.commitTransaction();
                     }
                 } else {
-                    log.info("Query Failed");
+                    log.debug("Query Failed");
                     if (isNewTransaction || isOngoingTransaction) {
-                        log.info("Rolling back transaction");
+                        log.debug("Rolling back transaction");
                         dbHandlerConnection.rollbackTransaction();
                     }
 
                     // if isNewConnection, rollback any transactions in the initial connection
                     if (isNewConnection) {
-                        log.info("Rolling back the initial connection");
+                        log.debug("Rolling back the initial connection");
                         DBHandler oldConnection = (DBHandler) handler.getConnection(Constants.CONNECTOR_NAME,
                                 connectionName);
                         if (oldConnection != null) {
@@ -415,7 +446,7 @@ public class ExecuteQuery extends AbstractConnector {
 
                 // if there is an active transaction do not return the connection to the pool
                 if (dbHandlerConnection.isTransactionStarted()) {
-                    log.info("Transaction is still active, not returning connection to pool");
+                    log.debug("Transaction is still active, not returning connection to pool");
 
                     // instead of returning to the pool, set the connection to the message context
                     // write the connection to the message context with the connectionname
@@ -424,7 +455,7 @@ public class ExecuteQuery extends AbstractConnector {
 
                 } else if (handler.getStatusOfConnection(Constants.CONNECTOR_NAME, connectionName)) {
                     handler.returnConnection(Constants.CONNECTOR_NAME, connectionName, dbHandlerConnection);
-                    log.info("Returning connection to pool");
+                    log.debug("Returning connection to pool");
                 }
 
             }
@@ -461,7 +492,18 @@ public class ExecuteQuery extends AbstractConnector {
      * @param stmt The statement object containing the SQL query and parameters.
      */
     private PreparedStatement getPreparedStatement(Connection conn, Statement stmt) throws SQLException, Exception {
-        PreparedStatement ps = conn.prepareStatement(stmt.getQuery());
+        PreparedStatement ps;
+        if (operation != null && operation.equalsIgnoreCase(Constants.OPERATION_CALL)) {
+            ps = conn.prepareCall(stmt.getQuery());
+        } else {
+            if (operation != null && operation.equalsIgnoreCase(Constants.OPERATION_INSERT) &&
+                    conn.getMetaData().supportsGetGeneratedKeys()) {
+                ps = conn.prepareStatement(stmt.getQuery(), PreparedStatement.RETURN_GENERATED_KEYS);
+            } else {
+                ps = conn.prepareStatement(stmt.getQuery());
+            }
+        }
+
         List<Statement.Parameter> parameters = stmt.getParameters();
 
         int columnNum = 1;
@@ -619,9 +661,6 @@ public class ExecuteQuery extends AbstractConnector {
                         "Missing value for column: " + columnNamesArray[i].trim());
             }
 
-            // key: insert:EmployeeNumber Value: Value {name ='null', keyValue ='30'}
-            // insert:EmployeeNumber Value: Value {name ='null', expression =:id}
-
             String valueString = propertyValue.toString();
             String value = null;
             if (valueString.contains("keyValue =")) {
@@ -638,8 +677,6 @@ public class ExecuteQuery extends AbstractConnector {
             }
 
             stmnt.addParameter(columnTypesArray[i].trim(), value);
-            // log.info("Column name: {} column value: {} column type: {}", columnNamesArray[i].trim(), value,
-            //         columnTypesArray[i].trim());
         }
     }
 
@@ -664,8 +701,6 @@ public class ExecuteQuery extends AbstractConnector {
                 String columnType = columnItem.getString(2).trim();
 
                 stmnt.addParameter(columnType, columnValue);
-                // log.info("Column name: {} column value: {} column type: {}", columnName, columnValue,
-                //         columnType);
             }
         }
 
@@ -691,7 +726,7 @@ public class ExecuteQuery extends AbstractConnector {
                 String columnType = columnItem.getString(1).trim();
 
                 stmnt.addParameter(columnType, columnValue);
-                log.info("Column value: {} column type: {}", columnValue, columnType);
+                log.debug("Column value: {} column type: {}", columnValue, columnType);
             }
         }
 
@@ -714,7 +749,8 @@ public class ExecuteQuery extends AbstractConnector {
     }
 
     /**
-     * Prepares the transaction environment by creating or reusing a connection and starting a transaction if needed.
+     * Prepares the transaction environment by creating or reusing a connection and
+     * starting a transaction if needed.
      */
     private DBHandler prepareTransactionEnvironment(MessageContext messageContext, ConnectionHandler handler,
             String connectionName, String transactionIsolation) throws SQLException, ConnectException {
@@ -727,7 +763,7 @@ public class ExecuteQuery extends AbstractConnector {
         if (connectionObj != null && connectionObj instanceof DBHandler) {
             messageContext.setProperty(Constants.DB_CONNECTION + "_" + connectionName, null);
 
-            log.info("Using connection from message context");
+            log.debug("Using connection from message context");
             conn = ((DBHandler) connectionObj).getJDBCConnection();
             if (conn != null && !conn.isClosed()) {
                 dbHandlerConnection = (DBHandler) connectionObj;
@@ -756,7 +792,7 @@ public class ExecuteQuery extends AbstractConnector {
 
                 ConnectionConfiguration newConfig = dbHandlerConnection.getConfig();
 
-                // return the current connection
+                // return the current connection to message context
                 if (dbHandlerConnection != null
                         && handler.getStatusOfConnection(Constants.CONNECTOR_NAME, connectionName)) {
                     messageContext.setProperty(Constants.DB_CONNECTION + "_" + connectionName,
@@ -770,7 +806,7 @@ public class ExecuteQuery extends AbstractConnector {
                 // conn = dbHandlerConnection.getJDBCConnection();
                 isNewConnection = true;
 
-                log.info("Creating new connection for transaction isolation level: " + transactionIsolation);
+                log.debug("Creating new connection for transaction isolation level: " + transactionIsolation);
             }
 
             dbHandlerConnection.startTransaction(transactionIsolation);
@@ -783,7 +819,12 @@ public class ExecuteQuery extends AbstractConnector {
     }
 
     private void handleError(MessageContext msgCtx, Exception e, Error error, String errorDetail) {
-        Utils.setErrorPropertiesToMessage(msgCtx, e, error);
+
+        String responseVariable = (String) getParameter(msgCtx, Constants.RESPONSE_VARIABLE);
+        Boolean overwriteBody = Boolean.parseBoolean((String) getParameter(msgCtx, Constants.OVERWRITE_BODY));
+
+        JsonObject resultJSON = Utils.generateErrorResult(msgCtx, e, error);
+        Utils.handleConnectorResponse(msgCtx, responseVariable, overwriteBody, resultJSON, null);
         handleException(Constants.GENERAL_ERROR_MSG + errorDetail, e, msgCtx);
     }
 

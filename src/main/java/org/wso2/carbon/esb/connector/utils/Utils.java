@@ -1,7 +1,28 @@
+/*
+ *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 LLC. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.wso2.carbon.esb.connector.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import com.google.gson.JsonObject;
+import org.apache.axis2.AxisFault;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -10,9 +31,10 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.synapse.MessageContext;
 import org.apache.synapse.SynapseConstants;
 import org.apache.axiom.soap.SOAPBody;
-import org.apache.axis2.AxisFault;
 import org.apache.synapse.commons.json.JsonUtil;
 import org.apache.synapse.core.axis2.Axis2MessageContext;
+import org.apache.synapse.data.connector.ConnectorResponse;
+import org.apache.synapse.data.connector.DefaultConnectorResponse;
 import org.apache.synapse.transport.passthru.PassThroughConstants;
 import org.wso2.carbon.connector.core.ConnectException;
 import org.wso2.carbon.esb.connector.exception.InvalidConfigurationException;
@@ -36,6 +58,7 @@ import java.sql.SQLTransientConnectionException;
 import java.sql.SQLTransientException;
 
 import java.sql.SQLWarning;
+import java.util.Map;
 
 public class Utils {
 
@@ -63,6 +86,16 @@ public class Utils {
         messageContext.setProperty(SynapseConstants.ERROR_EXCEPTION, exception);
     }
 
+    public static void setErrorPropertiesToMessage(MessageContext messageContext, Error error) {
+        messageContext.setProperty(SynapseConstants.ERROR_CODE, error.getErrorCode());
+        messageContext.setProperty(SynapseConstants.ERROR_MESSAGE, error.getErrorDetail());
+        // Axis2MessageContext axis2smc = (Axis2MessageContext) messageContext;
+        // org.apache.axis2.context.MessageContext axis2MessageCtx =
+        // axis2smc.getAxis2MessageContext();
+        // axis2MessageCtx.setProperty(SynapseConstants.STATUS_CODE,
+        // ResponseConstants.HTTP_STATUS_500);
+    }
+
     private static String getStackTrace(Throwable throwable) {
 
         final Writer result = new StringWriter();
@@ -70,18 +103,6 @@ public class Utils {
         throwable.printStackTrace(printWriter);
         return result.toString();
     }
-
-    // CONNECTION_ERROR("701101", "DB:CONNECTIVITY"),
-    // INVALID_INPUT("701102", "DB:INVALID_INPUT"),
-    // INVALID_RESPONSE("701103", "DB:INVALID_RESPONSE"),
-    // QUERY_EXECUTION_FAILURE("701104", "DB:QUERY_EXECUTION_FAILURE"),
-    // DATA_TYPE_CONVERSION_ERROR("701105", "DB:DATA_TYPE_CONVERSION"),
-    // CONNECTION_TIMEOUT("701106", "DB:CONNECTION_TIMEOUT"),
-    // TRANSACTION_ERROR("701107", "DB:TRANSACTION_ERROR"),
-    // PREPARED_STATEMENT_ERROR("701108", "DB:PREPARED_STATEMENT_ERROR"),
-    // BATCH_UPDATE_ERROR("701109", "DB:BATCH_UPDATE_ERROR"),
-    // RESOURCE_CLEANUP_ERROR("701110", "DB:RESOURCE_CLEANUP_ERROR"),
-    // UNKNOWN_EXCEPTION("701111", "DB:UNKNOWN_EXCEPTION");
 
     public static Error getErrorCode(Exception exception) {
 
@@ -178,4 +199,59 @@ public class Utils {
 
         return resultElement;
     }
+
+    public static void handleConnectorResponse(MessageContext messageContext, String responseVariable,
+            Boolean overwriteBody, JsonObject payload, Map<String, Object> attributes) {
+
+        ConnectorResponse response = new DefaultConnectorResponse();
+        if (overwriteBody != null && overwriteBody) {
+            org.apache.axis2.context.MessageContext axisMsgCtx = ((Axis2MessageContext) messageContext)
+                    .getAxis2MessageContext();
+            String jsonString = payload.toString();
+            try {
+                JsonUtil.getNewJsonPayload(axisMsgCtx, jsonString, true, true);
+            } catch (AxisFault e) {
+                throw new RuntimeException("Error while setting JSON payload", e);
+            }
+            axisMsgCtx.setProperty(org.apache.axis2.Constants.Configuration.MESSAGE_TYPE,
+                    Constants.JSON_CONTENT_TYPE);
+            axisMsgCtx.setProperty(org.apache.axis2.Constants.Configuration.CONTENT_TYPE,
+                    Constants.JSON_CONTENT_TYPE);
+        } else {
+            response.setPayload(payload);
+            response.setAttributes(attributes);
+            messageContext.setVariable(responseVariable, response);
+        }
+    }
+
+    public JsonObject generateOperationResult(MessageContext msgContext, boolean resultStatus, Error error) {
+        JsonObject jsonResult = new JsonObject();
+
+        jsonResult.addProperty("success", resultStatus);
+
+        if (error != null) {
+            setErrorPropertiesToMessage(msgContext, error);
+            JsonObject errorJson = new JsonObject();
+            errorJson.addProperty("code", error.getErrorCode());
+            errorJson.addProperty("message", error.getErrorDetail());
+            jsonResult.add("error", errorJson);
+        }
+
+        return jsonResult;
+    }
+
+    public static JsonObject generateErrorResult(MessageContext messageContext, Exception exception, Error error) {
+        JsonObject jsonResult = new JsonObject();
+
+        if (error != null) {
+            setErrorPropertiesToMessage(messageContext, exception, error);
+            JsonObject errorJson = new JsonObject();
+            errorJson.addProperty("code", error.getErrorCode());
+            errorJson.addProperty("message", error.getErrorDetail());
+            jsonResult.add("error", errorJson);
+        }
+
+        return jsonResult;
+    }
+
 }

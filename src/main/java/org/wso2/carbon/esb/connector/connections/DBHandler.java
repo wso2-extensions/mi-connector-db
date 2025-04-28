@@ -1,3 +1,21 @@
+/*
+ *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 LLC. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.wso2.carbon.esb.connector.connections;
 
 import java.sql.DriverManager;
@@ -53,9 +71,8 @@ public class DBHandler implements Connection {
             throws SQLException, ClassNotFoundException, Exception {
         java.sql.Connection connection = null;
 
-        // Class.forName("com.mysql.cj.jdbc.Driver");
         Class.forName(config.getDriverClassName());
-        log.info("Loading database driver: " + config.getDriverClassName());
+        log.debug("Loading database driver: " + config.getDriverClassName());
         connection = DriverManager.getConnection(config.getUrl(), config.getUsername(),
                 config.getPassword());
 
@@ -92,7 +109,7 @@ public class DBHandler implements Connection {
             }
 
             transactionStarted = true;
-            log.info("Transaction started with isolation level: " + conn.getTransactionIsolation());
+            log.debug("Transaction started with isolation level: " + conn.getTransactionIsolation());
         } catch (SQLException e) {
             log.error("Error starting transaction: " + e.getMessage());
             try {
@@ -112,7 +129,7 @@ public class DBHandler implements Connection {
         try {
             conn.commit();
             transactionStarted = false;
-            log.info("Transaction committed.");
+            log.debug("Transaction committed.");
         } catch (SQLException e) {
             log.error("Error committing transaction: " + e.getMessage());
             try {
@@ -132,7 +149,7 @@ public class DBHandler implements Connection {
         try {
             conn.rollback();
             transactionStarted = false;
-            log.info("Transaction rolled back.");
+            log.debug("Transaction rolled back.");
         } catch (SQLException e) {
             log.error("Error rolling back transaction: " + e.getMessage());
             throw new SQLException("Failed to rollback transaction: " + e.getMessage());
@@ -185,11 +202,11 @@ public class DBHandler implements Connection {
     public void close() {
         try {
             if (conn != null && !conn.isClosed()) {
-                log.info("Closing connection");
+                log.debug("Closing connection");
 
                 // if transaction is still open, rollback
                 if (transactionStarted) {
-                    log.info("Rolling back transaction");
+                    log.debug("Rolling back transaction");
                     conn.rollback();
                     transactionStarted = false;
                 }

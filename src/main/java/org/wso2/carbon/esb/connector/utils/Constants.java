@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -72,7 +72,6 @@ public final class Constants {
     public static final String RETRY_COUNT = "retryCount";
     public static final String POOL_CONNECTION_AGED_TIMEOUT = "poolConnectionAgedTimeout";
 
-
     // Connection pool configuration
     public static final String MAX_POOL_SIZE = "pool.maxSize";
     public static final String MIN_POOL_SIZE = "pool.minSize";
@@ -93,6 +92,8 @@ public final class Constants {
     public static final String INCLUDE_RESULT_TO = "includeResultTo";
     public static final String RESULT_PROPERTY_NAME = "resultPropertyName";
 
+    public static final String RESPONSE_VARIABLE = "responseVariable";
+    public static final String OVERWRITE_BODY = "overwriteBody";
     
     public static final String MESSAGE_BODY = "Message Body";
     public static final String MESSAGE_PROPERTY = "Message Property";
@@ -107,10 +108,7 @@ public final class Constants {
     public static final String LIMIT = "limit";
     public static final String OFFSET = "offset";
 
-    // Result handling
-
     public static final String FORMAT = "format";
-
     public static final String RESULT = "result";
     public static final String AFFECTED_ROWS = "affected.rows";
     public static final String RESULT_FORMAT = "result.format";
@@ -119,7 +117,9 @@ public final class Constants {
     public static final String FORMAT_CSV = "csv";
     public static final String FORMAT_TEXT = "text";
 
+    public static final String JSON_CONTENT_TYPE = "application/json";
+
     private Constants() {
-        // Prevent instantiation
+        
     }
 }

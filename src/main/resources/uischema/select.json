@@ -116,7 +116,7 @@
                     "defaultValue": "json",
                     "required": "true",
                     "helpTip": "Output format of the query result (json, xml, csv, text)",
-                    "hidden": false
+                    "hidden": true
                   }
                 },
                 {
@@ -329,25 +329,23 @@
                 {
                   "type": "attribute",
                   "value": {
-                    "name": "includeResultTo",
-                    "displayName": "Add Result To",
-                    "inputType": "comboOrExpression",
-                    "comboValues": ["Message Body","Message Property"],
-                    "defaultValue": "Message Body",
+                    "name": "responseVariable",
+                    "displayName": "Output Variable Name",
+                    "inputType": "string",
+                    "deriveResponseVariable": "true",
                     "required": "true",
-                    "helpTip": "Specify where to place operation result. Setting to a property will not change current payload at message body."
+                    "helpTip": "Name of the variable to which the output of the operation should be assigned"
                   }
                 },
                 {
                   "type": "attribute",
                   "value": {
-                    "name": "resultPropertyName",
-                    "displayName": "Property Name",
-                    "inputType": "stringOrExpression",
-                    "defaultValue": "",
-                    "required": "false",
-                    "enableCondition": [{"includeResultTo":"Message Property"}],
-                    "helpTip": "Name of property to add operation result"
+                    "name": "overwriteBody",
+                    "displayName": "Overwrite Message Body",
+                    "inputType": "checkbox",
+                    "defaultValue": "false",
+                    "helpTip": "Replace the Message Body in Message Context with the output of the operation (This will remove the payload from the above variable).",
+                    "required": "false"
                   }
                 }
               ]

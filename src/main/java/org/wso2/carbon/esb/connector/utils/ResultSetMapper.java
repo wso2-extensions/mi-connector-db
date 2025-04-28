@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -22,6 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -42,12 +45,60 @@ import java.util.Date;
 import javax.xml.namespace.QName;
 
 /**
- * Utility class to convert ResultSet to different formats like JSON, XML, CSV, and Text.
+ * Utility class to convert ResultSet to different formats like JSON, XML, CSV,
+ * and Text.
  */
 public class ResultSetMapper {
     private static final Logger log = LoggerFactory.getLogger(ResultSetMapper.class);
     private static final int INITIAL_STRING_BUILDER_CAPACITY = 1024;
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * Converts a ResultSet to a JsonArray (gson).
+     * 
+     * @param rs The ResultSet to convert.
+     * @return A JsonArray representing the ResultSet data.
+     * @throws SQLException If a database access error occurs.
+     */
+    public static JsonArray mapResultSetToJsonArray(ResultSet rs) throws SQLException {
+        JsonArray jsonArray = new JsonArray();
+        if (rs == null) {
+            log.warn("Null ResultSet provided for JSON conversion");
+            return jsonArray; // Return empty array
+        }
+
+        ResultSetMetaData metadata = rs.getMetaData();
+        int columnCount = metadata.getColumnCount();
+        String[] columnNames = new String[columnCount];
+
+        // Cache column names/labels
+        for (int i = 0; i < columnCount; i++) {
+            columnNames[i] = metadata.getColumnLabel(i + 1);
+        }
+
+        while (rs.next()) {
+            JsonObject jsonRow = new JsonObject();
+            for (int i = 0; i < columnCount; i++) {
+                String columnName = columnNames[i];
+                Object value = rs.getObject(i + 1);
+
+                if (value == null) {
+                    jsonRow.add(columnName, null); // Add as JSON null
+                } else if (value instanceof Boolean) {
+                    jsonRow.addProperty(columnName, (Boolean) value);
+                } else if (value instanceof Number) {
+                    jsonRow.addProperty(columnName, (Number) value);
+                } else if (value instanceof Date) {
+                    // Represent dates as ISO 8601 strings or timestamps
+                    jsonRow.addProperty(columnName, value.toString());
+                } else {
+                    jsonRow.addProperty(columnName, value.toString());
+                }
+            }
+            jsonArray.add(jsonRow);
+        }
+        return jsonArray;
+    }
 
     public Object mapToFormat(ResultSet rs, String format) throws Exception {
         if (rs == null) {
@@ -58,7 +109,7 @@ public class ResultSetMapper {
         try {
             switch (format.toLowerCase()) {
                 case Constants.FORMAT_JSON:
-                    return convertToJSON(rs);
+                    return mapResultSetToJsonArray(rs);
                 case Constants.FORMAT_XML:
                     return convertToXML(rs);
                 case Constants.FORMAT_CSV:
@@ -67,7 +118,7 @@ public class ResultSetMapper {
                     return convertToText(rs);
                 default:
                     log.warn("Unsupported format: {}. Using JSON as default.", format);
-                    return convertToJSON(rs);
+                    return mapResultSetToJsonArray(rs);
             }
         } catch (SQLException e) {
             throw new Exception("SQL error while converting ResultSet to " + format + " format", e);
@@ -163,7 +214,7 @@ public class ResultSetMapper {
 
             // load class csvPrinter
             Class.forName("org.apache.commons.csv.CSVPrinter");
-    
+
             // CSVPrinter csvPrinter = CSVFormat.DEFAULT.withHeader(headers).print(writer);
             try (CSVPrinter csvPrinter = new CSVPrinter(writer,
                     CSVFormat.DEFAULT.builder().setHeader(headers).build())) {

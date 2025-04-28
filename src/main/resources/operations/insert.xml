@@ -17,6 +17,9 @@
     <parameter name="includeResultTo" description="Specify where to place operation result."/>
     <parameter name="resultPropertyName" description="Name of property to add operation result."/>
     
+    <parameter name="responseVariable" description="The name of the variable to which the response should be stored."/>
+    <parameter name="overwriteBody" description="Replace the Message Body in Message Context with the response of the operation."/>
+
     <sequence>
         <class name="org.wso2.carbon.esb.connector.operations.ExecuteQuery">
             <property name="queryTimeout" expression="$func:queryTimeout" />

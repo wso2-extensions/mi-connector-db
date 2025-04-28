@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2024, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2025, WSO2 LLC. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 LLC. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -81,17 +81,7 @@ public class DBConfig extends AbstractConnector implements ManagedLifecycle {
                         new DBConnectionFactory(configuration), configuration.getConfiguration());
             }
 
-            log.info("Connection created: " + tenantSpecificConnectionName);
-
-            // if (!handler.checkIfConnectionExists(connectorName,
-            // tenantSpecificConnectionName)) {
-            // DBHandler dbHandler = new DBHandler(configuration);
-            // handler.createConnection(connectorName, tenantSpecificConnectionName,
-            // dbHandler, messageContext);
-            // }
-
-            // log.info("Connection already exists. Reusing the existing connection: " +
-            // tenantSpecificConnectionName);
+            log.debug("Connection created: " + tenantSpecificConnectionName);
 
         } catch (Exception e) {
             handleError(messageContext, e, Error.CONNECTION_ERROR, "Error initializing database connector");
