@@ -89,11 +89,6 @@ public class Utils {
     public static void setErrorPropertiesToMessage(MessageContext messageContext, Error error) {
         messageContext.setProperty(SynapseConstants.ERROR_CODE, error.getErrorCode());
         messageContext.setProperty(SynapseConstants.ERROR_MESSAGE, error.getErrorDetail());
-        // Axis2MessageContext axis2smc = (Axis2MessageContext) messageContext;
-        // org.apache.axis2.context.MessageContext axis2MessageCtx =
-        // axis2smc.getAxis2MessageContext();
-        // axis2MessageCtx.setProperty(SynapseConstants.STATUS_CODE,
-        // ResponseConstants.HTTP_STATUS_500);
     }
 
     private static String getStackTrace(Throwable throwable) {
@@ -166,8 +161,7 @@ public class Utils {
         }
 
         SOAPBody soapBody = msgContext.getEnvelope().getBody();
-        // Detaching first element (soapBody.getFirstElement().detach()) will be done by
-        // following method anyway.
+        
         JsonUtil.removeJsonPayload(((Axis2MessageContext) msgContext).getAxis2MessageContext());
         ((Axis2MessageContext) msgContext).getAxis2MessageContext().removeProperty(PassThroughConstants.NO_ENTITY_BODY);
         soapBody.addChild(resultElement);

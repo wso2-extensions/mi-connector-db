@@ -262,7 +262,6 @@ public class ExecuteQuery extends AbstractConnector {
             }
 
             // if operation is execute query and isPreparedStatement is set to true, then
-            // preparedStmt = query
             if (operation.equalsIgnoreCase(Constants.OPERATION_EXECUTE_QUERY)
                     && Boolean.parseBoolean(isPreparedStatement)) {
                 preparedStmt = query;
@@ -797,13 +796,9 @@ public class ExecuteQuery extends AbstractConnector {
                         && handler.getStatusOfConnection(Constants.CONNECTOR_NAME, connectionName)) {
                     messageContext.setProperty(Constants.DB_CONNECTION + "_" + connectionName,
                             dbHandlerConnection);
-
-                    // handler.returnConnection(Constants.CONNECTOR_NAME, connectionName,
-                    // dbHandlerConnection);
                 }
 
                 dbHandlerConnection = new DBHandler(newConfig);
-                // conn = dbHandlerConnection.getJDBCConnection();
                 isNewConnection = true;
 
                 log.debug("Creating new connection for transaction isolation level: " + transactionIsolation);

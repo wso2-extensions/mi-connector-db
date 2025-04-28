@@ -57,7 +57,6 @@ public class Statement {
     }
 
     public static class Parameter {
-        // private String name;
         private int type;
         private String value;
 

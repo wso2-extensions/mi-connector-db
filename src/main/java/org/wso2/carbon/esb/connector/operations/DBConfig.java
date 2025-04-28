@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 public class DBConfig extends AbstractConnector implements ManagedLifecycle {
 
     private static final Logger log = LoggerFactory.getLogger(DBConfig.class);
-    // private static final String OPERATION_NAME = "init";
 
     @Override
     public void init(SynapseEnvironment synapseEnvironment) {
@@ -113,10 +112,6 @@ public class DBConfig extends AbstractConnector implements ManagedLifecycle {
         }
 
         connectionConfig.setConfiguration(ConnectorUtils.getPoolConfiguration(msgContext));
-
-        // connectionConfig.getConfiguration().setExhaustedAction("WHEN_EXHAUSTED_BLOCK");
-        // connectionConfig.getConfiguration().setTestOnBorrow(true);
-
         return connectionConfig;
     }
 
