@@ -1,8 +1,0 @@
-<template xmlns="http://ws.apache.org/ns/synapse" name="commitTransaction">
-    <parameter name="resultPropertyName" description="Property to store result set"/>
-    <sequence>
-        <class name="org.wso2.carbon.esb.connector.operations.ExecuteQuery">
-            <property name="operation" value="COMMIT_TRANSACTION"/>
-        </class>
-    </sequence>
-</template>

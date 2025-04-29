@@ -20,7 +20,8 @@
     <component name="db" package="org.wso2.carbon.esb.connector" >
         <dependency component="config" />
         <dependency component="operations" />
-        <description>WSO2 DB connector library</description>
+        <dependency component="transactions" />
+        <description>WSO2 DB Connector</description>
     </component>
     <displayName>DB</displayName>
     <icon>icon/icon-small.png</icon>
