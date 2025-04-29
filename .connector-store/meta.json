@@ -1,0 +1,20 @@
+{
+    "name": "Relational Database Connector",
+    "owner": "WSO2",
+    "category": "Integration",
+    "documentationUrl": "https://mi.docs.wso2.com/en/latest/reference/connectors/db-connector/db-connector-overview/",
+    "description": "The DB connector allows to perform operations on relational databases.",
+    "status": "Active",
+    "releases": [
+        {
+            "tagName": "v1.0.0",
+            "products": [
+                "MI 4.4.0"
+            ],
+            "isHidden": false
+        }
+    ],
+    "labels": [
+        "marketing"
+    ]
+}
