@@ -24,7 +24,7 @@ dependencies:
   - groupId: "com.ibm.db2"
     artifactId: "jcc"
     version: "12.1.0.0"
-    connectionType: "DB2"
+    connectionType: "IBM DB2"
   - groupId: "com.mysql"
     artifactId: "mysql-connector-j"
     version: "9.2.0"
