@@ -32,9 +32,6 @@
     <parameter name="fetchSize" />
     <parameter name="maxRows" />
     <parameter name="transactionIsolation" />
-
-    <parameter name="includeResultTo" description="Specify where to place operation result."/>
-    <parameter name="resultPropertyName" description="Name of property to add operation result."/>
     
     <parameter name="responseVariable" description="The name of the variable to which the response should be stored."/>
     <parameter name="overwriteBody" description="Replace the Message Body in Message Context with the response of the operation."/>
@@ -44,7 +41,6 @@
             <property name="queryTimeout" expression="$func:queryTimeout" />
             <property name="fetchSize" expression="$func:fetchSize" />
             <property name="maxRows" expression="$func:maxRows" />
-            <property name="resultPropertyName" expression="$func:resultPropertyName" />
             <property name="columns" expression="$func:columns"/>
             
             <property name="operation" value="UPDATE"/>

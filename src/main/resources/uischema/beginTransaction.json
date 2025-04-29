@@ -64,17 +64,6 @@
                     "helpTip": "Isolation level for the transaction",
                     "hidden": false
                   }
-                },
-                {
-                  "type": "attribute",
-                  "value": {
-                    "name": "resultPropertyName",
-                    "displayName": "Result",
-                    "inputType": "stringOrExpression",
-                    "defaultValue": "result",
-                    "required": "true",
-                    "helpTip": "Property name to store the query result"
-                  }
                 }
               ]
             }

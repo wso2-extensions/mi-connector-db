@@ -24,8 +24,6 @@
     <parameter name="isPreparedStatement" />
 
     <parameter name="isResultSet" description="If the query is expected to return a result set."/>    
-    <parameter name="includeResultTo" description="Specify where to place operation result."/>
-    <parameter name="resultPropertyName" description="Name of property to add operation result."/>
     
     <parameter name="queryTimeout" />
     <parameter name="fetchSize" />
@@ -40,7 +38,6 @@
             <property name="queryTimeout" expression="$func:queryTimeout" />
             <property name="fetchSize" expression="$func:fetchSize" />
             <property name="maxRows" expression="$func:maxRows" />
-            <property name="resultPropertyName" expression="$func:resultPropertyName" />
             <property name="parameters" expression="$func:parameters" />
 
             <property name="operation" value="EXECUTE_QUERY"/>

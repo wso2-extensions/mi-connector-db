@@ -42,7 +42,6 @@
             <property name="queryTimeout" expression="$func:queryTimeout" />
             <property name="fetchSize" expression="$func:fetchSize" />
             <property name="maxRows" expression="$func:maxRows" />
-            <property name="resultPropertyName" expression="$func:resultPropertyName" />
             <property name="columns" expression="$func:columns"/>
 
             <property name="operation" value="CALL"/>
