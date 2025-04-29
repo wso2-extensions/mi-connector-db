@@ -18,7 +18,9 @@
               "allowedConnectionTypes": [
                 "MySQL",
                 "PostgreSQL",
-                "Microsoft SQL Server"
+                "Microsoft SQL Server",
+                "Oracle",
+                "IBM DB2"
               ],
               "defaultType": "MySQL",
               "defaultValue": "",
