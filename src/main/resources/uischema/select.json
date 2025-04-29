@@ -324,7 +324,7 @@
           {
             "type": "attributeGroup",
             "value": {
-              "groupName": "Operation Result",
+              "groupName": "Output",
               "elements": [
                 {
                   "type": "attribute",
