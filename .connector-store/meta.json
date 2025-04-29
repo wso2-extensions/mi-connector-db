@@ -1,10 +1,15 @@
 {
     "name": "Relational Database Connector",
     "owner": "WSO2",
+    "product": "MI",
     "category": "Storage and Content Management",
     "documentationUrl": "https://mi.docs.wso2.com/en/latest/reference/connectors/db-connector/db-connector-overview/",
+    "mavenGroupId": "org.wso2.integration.connector",
+    "mavenArtifactId": "mi-connector-db",
     "description": "The DB connector allows to perform operations on relational databases.",
     "status": "Active",
+    "rank": 6,
+    "type": "Connector",
     "releases": [
         {
             "tagName": "v1.0.0",

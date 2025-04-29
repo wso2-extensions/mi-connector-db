@@ -24,7 +24,7 @@
     <groupId>org.wso2.integration.connector</groupId>
     <artifactId>mi-connector-db</artifactId>
 
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>WSO2 MI Connector For Relational Databases</name>
     <url>https://wso2.org</url>

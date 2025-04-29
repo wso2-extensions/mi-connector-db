@@ -229,24 +229,6 @@
                     "required": "false",
                     "helpTip": "Query timeout in seconds"
                   }
-                },
-                {
-                  "type": "attribute",
-                  "value": {
-                    "name": "transactionIsolation",
-                    "displayName": "Transaction Isolation (If set, this query will be executed in a separate transaction)",
-                    "inputType": "combo",
-                    "comboValues": [
-                      "TRANSACTION_NONE",
-                      "TRANSACTION_READ_COMMITTED",
-                      "TRANSACTION_READ_UNCOMMITTED",
-                      "TRANSACTION_REPEATABLE_READ",
-                      "TRANSACTION_SERIALIZABLE"
-                    ],
-                    "defaultValue": "TRANSACTION_NONE",
-                    "required": "false",
-                    "helpTip": "Transaction isolation level"
-                  }
                 }
               ]
             }
