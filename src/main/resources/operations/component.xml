@@ -38,6 +38,7 @@
       <displayName>Update</displayName>
       <file>update.xml</file>
       <description>Update query</description>
+      <hidden>true</hidden>
     </component>
     <component name="delete">
       <displayName>Delete</displayName>

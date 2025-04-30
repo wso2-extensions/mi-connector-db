@@ -60,10 +60,10 @@
                     "name": "isolationLevel",
                     "displayName": "Isolation Level",
                     "inputType": "combo",
-                    "comboValues": ["TRANSACTION_NONE", "TRANSACTION_READ_UNCOMMITTED", "TRANSACTION_READ_COMMITTED", "TRANSACTION_REPEATABLE_READ", "TRANSACTION_SERIALIZABLE"],
-                    "defaultValue": "TRANSACTION_NONE",
+                    "comboValues": ["TRANSACTION_READ_UNCOMMITTED", "TRANSACTION_READ_COMMITTED", "TRANSACTION_REPEATABLE_READ", "TRANSACTION_SERIALIZABLE"],
+                    "defaultValue": "TRANSACTION_READ_UNCOMMITTED",
                     "required": "true",
-                    "helpTip": "Isolation level for the transaction",
+                    "helpTip": "Specifies the transaction isolation level:\n- TRANSACTION_READ_UNCOMMITTED: Allows reading uncommitted changes (dirty reads).\n- TRANSACTION_READ_COMMITTED: Prevents dirty reads; allows non-repeatable reads.\n- TRANSACTION_REPEATABLE_READ: Prevents dirty reads and non-repeatable reads; allows phantom reads.\n- TRANSACTION_SERIALIZABLE: Prevents dirty reads, non-repeatable reads, and phantom reads. Highest isolation level.",
                     "hidden": false
                   }
                 }
