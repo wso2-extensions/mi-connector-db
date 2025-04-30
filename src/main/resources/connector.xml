@@ -23,6 +23,6 @@
         <dependency component="transactions" />
         <description>WSO2 DB Connector</description>
     </component>
-    <displayName>DB</displayName>
+    <displayName>Database</displayName>
     <icon>icon/icon-small.svg</icon>
 </connector>
