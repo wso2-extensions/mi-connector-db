@@ -391,6 +391,7 @@ public class ExecuteQuery extends AbstractConnector {
             }
 
             Utils.handleConnectorResponse(messageContext, responseVariable, overwriteBody, resultJSON, null);
+            querySuccess = true;
 
         } catch (SQLSyntaxErrorException e) {
             handleError(messageContext, e, Error.SQL_SYNTAX_ERROR, "Error executing query: " + e.getMessage());
