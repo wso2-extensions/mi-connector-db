@@ -351,6 +351,12 @@
             </plugin>
         </plugins>
     </build>
+    <scm>
+        <connection>scm:git:https://github.com/wso2-extensions/mi-connector-db</connection>
+        <url>https://github.com/wso2-extensions/mi-connector-db.git</url>
+        <developerConnection>scm:git:https://github.com/wso2-extensions/mi-connector-db</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
     <repositories>
         <repository>
             <id>wso2-nexus</id>
