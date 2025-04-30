@@ -1,0 +1,100 @@
+{
+    "name": "Database",
+    "owner": "WSO2",
+    "product": "MI",
+    "category": "Storage and Content Management",
+    "documentationUrl": "https://mi.docs.wso2.com/en/latest/reference/connectors/db-connector/db-connector-overview/",
+    "mavenGroupId": "org.wso2.integration.connector",
+    "mavenArtifactId": "mi-connector-db",
+    "description": "The DB connector allows to perform operations on relational databases.",
+    "status": "Active",
+    "rank": 6,
+    "type": "Connector",
+    "releases": [
+        {
+            "tagName": "v1.0.0",
+            "products": [
+                "MI 4.4.0"
+            ],
+            "operations": [
+                {
+                    "name": "init",
+                    "description": "Init operation",
+                    "isHidden": true
+                },
+                {
+                    "name": "executeQuery",
+                    "description": "Execute database query",
+                    "isHidden": false
+                },
+                {
+                    "name": "select",
+                    "description": "Select query",
+                    "isHidden": false
+                },
+                {
+                    "name": "insert",
+                    "description": "Insert query",
+                    "isHidden": false
+                },
+                {
+                    "name": "update",
+                    "description": "Update query",
+                    "isHidden": false
+                },
+                {
+                    "name": "delete",
+                    "description": "Delete query",
+                    "isHidden": false
+                },
+                {
+                    "name": "call",
+                    "description": "Stored procedure",
+                    "isHidden": false
+                },
+                {
+                    "name": "beginTransaction",
+                    "description": "Begin transaction",
+                    "isHidden": false
+                },
+                {
+                    "name": "commitTransaction",
+                    "description": "Commit transaction",
+                    "isHidden": false
+                },
+                {
+                    "name": "rollbackTransaction",
+                    "description": "Rollback transaction",
+                    "isHidden": false
+                }
+            ],
+            "connections": [
+                {
+                    "name": "MySQL",
+                    "description": "Connection for MySQL databases."
+                },
+                {
+                    "name": "PostgreSQL",
+                    "description": "Connection for PostgreSQL databases."
+                },
+                {
+                    "name": "Microsoft SQL Server",
+                    "description": "Connection for Microsoft SQL Server databases."
+                },
+                {
+                    "name": "Oracle",
+                    "description": "Connection for Oracle databases."
+                },
+                {
+                    "name": "IBM DB2",
+                    "description": "Connection for IBM DB2 databases."
+                }
+            ],
+            "isHidden": false
+        }
+    ],
+    "labels": [
+        "database",
+        "storage"
+    ]
+}
