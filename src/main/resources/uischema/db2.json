@@ -1,7 +1,7 @@
 {
   "connectorName": "db",
-  "connectionName": "IBM DB2",
-  "title": "IBM DB2 Database Connection Configuration",
+  "connectionName": "IBM_DB2",
+  "title": "IBM_DB2 Database Connection Configuration",
   "help": "<h1>Database connector</h1> <b>The database connector provides the capability to connect to relational databases and perform operations on them.</b> <p> The database connector supports executing SQL queries, transactions, and managing connections to various databases.</p>",
   "elements": [
     {
@@ -100,7 +100,7 @@
                     "displayName": "Database Driver",
                     "inputType": "dbDriver",
                     "className": "com.ibm.db2.jcc.DB2Driver",
-                    "defaultValue": "IBM DB2",
+                    "defaultValue": "IBM_DB2",
                     "required": "true",
                     "helpTip": "The database driver to use for the connection"
                   }

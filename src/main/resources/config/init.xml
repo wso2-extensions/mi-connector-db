@@ -20,7 +20,7 @@
 
    <!-- common -->
 	<parameter name="name" description="Unique name the connection is identified by"/>
-   <parameter name="connectionType" description="Database type to connect. Possible values 'MYSQL', 'ORACLE', 'MSSQL', 'POSTGRESQL', 'IBM DB2'"/>
+   <parameter name="connectionType" description="Database type to connect. Possible values 'MYSQL', 'ORACLE', 'MSSQL', 'POSTGRESQL', 'IBM_DB2'"/>
    <parameter name="dbUrl" description="Database URL"/>
    <parameter name="dbUser" description="Database username"/>
    <parameter name="dbPassword" description="Database password"/>

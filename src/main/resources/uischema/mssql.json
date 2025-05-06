@@ -1,6 +1,6 @@
 {
     "connectorName": "db",
-    "connectionName": "Microsoft SQL Server",
+    "connectionName": "Microsoft_SQL_Server",
     "title": "Microsoft SQL Server Database Connection Configuration",
     "help": "<h1>Database connector</h1> <b>The database connector provides the capability to connect to databases and perform various operations</b>",
     "elements": [
