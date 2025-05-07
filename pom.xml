@@ -232,7 +232,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>${connector.name}-connector-1.0.0</finalName>
+                            <finalName>${connector.name}-connector-${version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <filters>
                                 <filter>src/main/assembly/filter.properties</filter>
