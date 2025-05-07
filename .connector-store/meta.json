@@ -78,7 +78,7 @@
                     "description": "Connection for PostgreSQL databases."
                 },
                 {
-                    "name": "Microsoft SQL Server",
+                    "name": "Microsoft_SQL_Server",
                     "description": "Connection for Microsoft SQL Server databases."
                 },
                 {
@@ -86,7 +86,7 @@
                     "description": "Connection for Oracle databases."
                 },
                 {
-                    "name": "IBM DB2",
+                    "name": "IBM_DB2",
                     "description": "Connection for IBM DB2 databases."
                 }
             ],
