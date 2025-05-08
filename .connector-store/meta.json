@@ -7,7 +7,7 @@
     "mavenGroupId": "org.wso2.integration.connector",
     "mavenArtifactId": "mi-connector-db",
     "description": "The DB connector allows to perform operations on relational databases.",
-    "status": "Active",
+    "status": "Inactive",
     "rank": 6,
     "type": "Connector",
     "releases": [
