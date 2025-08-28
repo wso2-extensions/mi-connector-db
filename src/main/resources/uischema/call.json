@@ -45,6 +45,25 @@
                 {
                   "type": "attribute",
                   "value": {
+                    "name": "assistanceMode",
+                    "displayName": "Enable Smart Query Assistance",
+                    "inputType": "checkbox",
+                    "defaultValue": "true",
+                    "onValueChange": {
+                      "function": "updateTargetCombo",
+                      "params": [
+                        {
+                          "rpc": "fetchDSSTables",
+                          "target": "table"
+                        }
+                      ]
+                    },
+                    "helpTip": "When enabled, connects to the database and automatically show available tables and columns. \nWhen disabled, you can manually specify table and column information"
+                  }
+                },
+                {
+                  "type": "attribute",
+                  "value": {
                     "readOnly": true,
                     "readonly": "readonly",
                     "name": "query",
@@ -281,7 +300,7 @@
                     "inputType": "checkbox",
                     "defaultValue": "false",
                     "helpTip": "Replace the Message Body in Message Context with the output of the operation (This will remove the payload from the above variable).",
-                    "required": "true"
+                    "required": "false"
                   }
                 }
               ]

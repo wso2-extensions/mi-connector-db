@@ -32,7 +32,7 @@
                       "name": "dbUrl",
                       "displayName": "Database URL",
                       "inputType": "string",
-                      "defaultValue": "jdbc:pstgresql://localhost:5432/database",
+                      "defaultValue": "jdbc:postgresql://localhost:5432/database",
                       "required": "true",
                       "helpTip": "The URL of the database"
                     }
@@ -71,14 +71,16 @@
                     }
                   },
                   {
-                    "type": "attribute",
+                    "type": "radio",
                     "value": {
-                      "name": "driverPath",
-                      "displayName": "JDBC Driver Path",
-                      "inputType": "string",
-                      "defaultValue": "",
-                      "required": "false",
-                      "helpTip": "The path to the JDBC driver"
+                      "name": "driverSelectOption",
+                      "displayName": "JDBC Driver Select Options",
+                      "inputType": "radio",
+                      "defaultValue": "Use Default Driver",
+                      "helpTip": "Choose how you want to add the JDBC driver",
+                      "comboValues": [
+                        "Use Default Driver","Select Local Driver","Add Maven Dependency"
+                      ]
                     }
                   },
                   {
@@ -86,9 +88,8 @@
                     "value": {
                       "name": "userConsent",
                       "displayName": "Allow access to database metadata (for enhanced user experience)",
-                      "inputType": "boolean",
+                      "inputType": "checkbox",
                       "defaultValue": "true",
-                      "required": "false",
                       "helpTip": "Check to allow access"
                     }
                   }

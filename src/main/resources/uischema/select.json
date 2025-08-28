@@ -45,8 +45,26 @@
                 {
                   "type": "attribute",
                   "value": {
+                    "name": "assistanceMode",
+                    "displayName": "Enable Smart Query Assistance",
+                    "inputType": "checkbox",
+                    "defaultValue": "true",
+                    "onValueChange": {
+                      "function": "updateTargetCombo",
+                      "params": [
+                        {
+                          "rpc": "fetchDSSTables",
+                          "target": "table"
+                        }
+                      ]
+                    },
+                    "helpTip": "When enabled, connects to the database and automatically show available tables and columns. \nWhen disabled, you can manually specify table and column information"
+                  }
+                },
+                {
+                  "type": "attribute",
+                  "value": {
                     "readOnly": true,
-                    "readonly": "readonly",
                     "name": "query",
                     "displayName": "Query",
                     "inputType": "expressionTextArea",
@@ -126,6 +144,46 @@
                   "value": {
                     "name": "table",
                     "displayName": "Table Name",
+                    "inputType": "string",
+                    "defaultValue": "",
+                    "required": "true",
+                    "helpTip": "Type of the query result",
+                    "onValueChange": {
+                      "function": "handleDynamicContent",
+                      "params": [
+                        {
+                          "rpc": "getDynamicFields",
+                          "value": "table",
+                          "targetCombo": ["orderBy"],
+                          "onDynamicFieldChange": {
+                            "function": "buildQuery",
+                            "params": [
+                              {
+                                "queryType": "select",
+                                "resultField": "query",
+                                "preparedResultField": "preparedStmt",
+                                "columnTypesField": "columnTypes",
+                                "columnNamesField": "columnNames"
+                              }
+                            ]
+                          }
+                        }
+
+                      ]
+                    },
+                    "parentField": "columns"
+                  },
+                  "enableCondition": [
+                    {
+                      "queryType": "offline"
+                    }
+                  ]
+                },
+                {
+                  "type": "attribute",
+                  "value": {
+                    "name": "table",
+                    "displayName": "Table Name",
                     "inputType": "comboOrExpression",
                     "comboValues": [],
                     "defaultValue": "",
@@ -154,7 +212,12 @@
                       ]
                     },
                     "parentField": "columns"
-                  }
+                  },
+                  "enableCondition": [
+                    {
+                      "queryType": "online"
+                    }
+                  ]
                 },
                 {
                   "type": "table",
@@ -215,6 +278,43 @@
                 {
                   "type": "attribute",
                   "value": {
+                    "name": "addResponseColumns",
+                    "displayName": "Add Specific Columns To Result",
+                    "inputType": "string",
+                    "defaultValue": "",
+                    "required": "false",
+                    "helpTip": "Comma separated list of columns",
+                    "hidden": false,
+                    "parentField": "table",
+                    "onValueChange": {
+                      "function": "buildQuery"
+                    }
+                  }
+                },
+                {
+                  "type": "attribute",
+                  "value": {
+                    "name": "orderBy",
+                    "displayName": "Order By",
+                    "inputType": "string",
+                    "defaultValue": "",
+                    "required": "false",
+                    "helpTip": "From which column to order the results",
+                    "hidden": false,
+                    "parentField": "table",
+                    "onValueChange": {
+                      "function": "buildQuery"
+                    }
+                  },
+                  "enableCondition": [
+                    {
+                      "queryType": "offline"
+                    }
+                  ]
+                },
+                {
+                  "type": "attribute",
+                  "value": {
                     "name": "orderBy",
                     "displayName": "Order By",
                     "inputType": "comboOrExpression",
@@ -227,7 +327,13 @@
                     "onValueChange": {
                       "function": "buildQuery"
                     }
-                  }
+                  },
+
+                  "enableCondition": [
+                    {
+                      "queryType": "online"
+                    }
+                  ]
                 },
                 {
                   "type": "attribute",
@@ -329,7 +435,7 @@
                     "inputType": "checkbox",
                     "defaultValue": "false",
                     "helpTip": "Replace the Message Body in Message Context with the output of the operation (This will remove the payload from the above variable).",
-                    "required": "true"
+                    "required": "false"
                   }
                 }
               ]

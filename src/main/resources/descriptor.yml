@@ -15,7 +15,7 @@ dependencies:
     connectionType: "ORACLE"
   - groupId: "org.postgresql"
     artifactId: "postgresql"
-    version: "42.2.23"
+    version: "42.7.4"
     connectionType: "POSTGRESQL"
   - groupId: "com.microsoft.sqlserver"
     artifactId: "mssql-jdbc"
