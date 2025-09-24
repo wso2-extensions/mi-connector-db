@@ -22,7 +22,7 @@
     <parameter name="preparedStmt" />
     <parameter name="columnNames" />
     <parameter name="columnTypes" />
-    <parameter name="addResponseColumns" />
+    <parameter name="responseColumns" />
     <parameter name="format" />
     <parameter name="table" />
 

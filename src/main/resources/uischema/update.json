@@ -46,11 +46,11 @@
                   "type": "attribute",
                   "value": {
                     "name": "assistanceMode",
-                    "displayName": "Enable Smart Query Assistance",
+                    "displayName": "Enable Smart Query Assistance (Online Mode)",
                     "inputType": "checkbox",
                     "defaultValue": "true",
                     "onValueChange": {
-                      "function": "updateTargetCombo",
+                      "function": "handleAssistanceMode",
                       "params": [
                         {
                           "rpc": "fetchDSSTables",
@@ -58,7 +58,7 @@
                         }
                       ]
                     },
-                    "helpTip": "When enabled, connects to the database and automatically show available tables and columns. \nWhen disabled, you can manually specify table and column information"
+                    "helpTip": "Connect to database and fetch tables and columns."
                   }
                 },
                 {

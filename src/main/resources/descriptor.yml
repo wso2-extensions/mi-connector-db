@@ -20,7 +20,7 @@ dependencies:
   - groupId: "com.microsoft.sqlserver"
     artifactId: "mssql-jdbc"
     version: "12.8.1.jre8"
-    connectionType: "Microsoft_SQL_Server"
+    connectionType: "MICROSOFT_SQL_SERVER"
   - groupId: "com.ibm.db2"
     artifactId: "jcc"
     version: "12.1.0.0"
@@ -28,7 +28,7 @@ dependencies:
   - groupId: "com.mysql"
     artifactId: "mysql-connector-j"
     version: "9.2.0"
-    connectionType: "MARIA DB"
+    connectionType: "MARIA_DB"
 
 repositories:
   - id: "wso2-nexus"
