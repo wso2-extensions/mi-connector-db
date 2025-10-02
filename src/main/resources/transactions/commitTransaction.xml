@@ -18,6 +18,7 @@
 -->
 
 <template xmlns="http://ws.apache.org/ns/synapse" name="commitTransaction">
+    <parameter name="enable" />
     <sequence>
         <class name="org.wso2.carbon.esb.connector.operations.ExecuteQuery">
             <property name="operation" value="COMMIT_TRANSACTION"/>

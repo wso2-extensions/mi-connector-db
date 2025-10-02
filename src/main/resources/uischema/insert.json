@@ -38,6 +38,25 @@
             }
           },
           {
+            "type": "attribute",
+            "value": {
+              "name": "assistanceMode",
+              "displayName": "Enable Smart Query Assistance (Online Mode)",
+              "inputType": "checkbox",
+              "defaultValue": "true",
+              "onValueChange": {
+                "function": "handleAssistanceMode",
+                "params": [
+                  {
+                    "rpc": "fetchDSSTables",
+                    "target": "table"
+                  }
+                ]
+              },
+              "helpTip": "Connect to database and fetch tables and columns."
+            }
+          },
+          {
             "type": "attributeGroup",
             "value": {
               "groupName": "Basic",
@@ -115,11 +134,51 @@
                     "displayName": "Query Type",
                     "inputType": "combo",
                     "comboValues": ["online", "offline"],
-                    "defaultValue": "offline",
+                    "defaultValue": "",
                     "required": false,
                     "helpTip": "Type of the query",
                     "hidden": true
                   }
+                },
+                {
+                  "type": "attribute",
+                  "value": {
+                    "name": "table",
+                    "displayName": "Table Name",
+                    "inputType": "string",
+                    "defaultValue": "",
+                    "required": "true",
+                    "helpTip": "Type of the query result",
+                    "onValueChange": {
+                      "function": "handleDynamicContent",
+                      "params": [
+                        {
+                          "rpc": "getDynamicFields",
+                          "value": "table",
+                          "targetCombo": ["orderBy"],
+                          "onDynamicFieldChange": {
+                            "function": "buildQuery",
+                            "params": [
+                              {
+                                "queryType": "insert",
+                                "resultField": "query",
+                                "preparedResultField": "preparedStmt",
+                                "columnTypesField": "columnTypes",
+                                "columnNamesField": "columnNames"
+                              }
+                            ]
+                          }
+                        }
+
+                      ]
+                    },
+                    "parentField": "columns"
+                  },
+                  "enableCondition": [
+                    {
+                      "queryType": "offline"
+                    }
+                  ]
                 },
                 {
                   "type": "attribute",
@@ -153,7 +212,12 @@
                       ]
                     },
                     "parentField": "columns"
-                  }
+                  },
+                  "enableCondition": [
+                    {
+                      "queryType": "online"
+                    }
+                  ]
                 },
                 {
                   "type": "table",
@@ -257,7 +321,7 @@
                     "inputType": "checkbox",
                     "defaultValue": "false",
                     "helpTip": "Replace the Message Body in Message Context with the output of the operation (This will remove the payload from the above variable).",
-                    "required": "true"
+                    "required": "false"
                   }
                 }
               ]

@@ -71,14 +71,16 @@
                     }
                   },
                   {
-                    "type": "attribute",
+                    "type": "radio",
                     "value": {
-                      "name": "driverPath",
-                      "displayName": "JDBC Driver Path",
-                      "inputType": "string",
-                      "defaultValue": "",
-                      "required": "false",
-                      "helpTip": "The path to the JDBC driver"
+                      "name": "driverSelectOption",
+                      "displayName": "JDBC Driver Select Options",
+                      "inputType": "radio",
+                      "defaultValue": "Use Default Driver",
+                      "helpTip": "Choose how you want to add the JDBC driver",
+                      "comboValues": [
+                        "Use Default Driver","Select Local Driver","Add Maven Dependency"
+                      ]
                     }
                   },
                   {
@@ -86,9 +88,9 @@
                     "value": {
                       "name": "userConsent",
                       "displayName": "Allow access to database metadata (for enhanced user experience)",
-                      "inputType": "boolean",
-                      "defaultValue": "true",
+                      "inputType": "checkbox",
                       "required": "false",
+                      "defaultValue": "true",
                       "helpTip": "Check to allow access"
                     }
                   }

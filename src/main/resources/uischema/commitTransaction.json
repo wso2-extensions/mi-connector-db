@@ -42,8 +42,20 @@
             "value": {
               "groupName": "Basic",
               "elements": [
+                {
+                  "type": "attribute",
+                  "value": {
+                    "name": "enable",
+                    "displayName": "Enable",
+                    "inputType": "string",
+                    "defaultValue": "true",
+                    "required": "false",
+                    "hidden": true
+                  }
+                }
                 
-              ]
+              ],
+              "hidden": true
             }
           }
         ]

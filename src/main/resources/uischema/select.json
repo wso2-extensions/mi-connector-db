@@ -38,6 +38,25 @@
             }
           },
           {
+            "type": "attribute",
+            "value": {
+              "name": "assistanceMode",
+              "displayName": "Enable Smart Query Assistance (Online Mode)",
+              "inputType": "checkbox",
+              "defaultValue": "true",
+              "onValueChange": {
+                "function": "handleAssistanceMode",
+                "params": [
+                  {
+                    "rpc": "fetchDSSTables",
+                    "target": "table"
+                  }
+                ]
+              },
+              "helpTip": "Connect to database and fetch tables and columns."
+            }
+          },
+          {
             "type": "attributeGroup",
             "value": {
               "groupName": "Basic",
@@ -46,7 +65,6 @@
                   "type": "attribute",
                   "value": {
                     "readOnly": true,
-                    "readonly": "readonly",
                     "name": "query",
                     "displayName": "Query",
                     "inputType": "expressionTextArea",
@@ -102,7 +120,7 @@
                     "displayName": "Query Type",
                     "inputType": "combo",
                     "comboValues": ["online", "offline"],
-                    "defaultValue": "offline",
+                    "defaultValue": "",
                     "required": false,
                     "helpTip": "Type of the query",
                     "hidden": true
@@ -120,6 +138,46 @@
                     "helpTip": "Output format of the query result (json, xml, csv, text)",
                     "hidden": true
                   }
+                },
+                {
+                  "type": "attribute",
+                  "value": {
+                    "name": "table",
+                    "displayName": "Table Name",
+                    "inputType": "string",
+                    "defaultValue": "",
+                    "required": "true",
+                    "helpTip": "Type of the query result",
+                    "onValueChange": {
+                      "function": "handleDynamicContent",
+                      "params": [
+                        {
+                          "rpc": "getDynamicFields",
+                          "value": "table",
+                          "targetCombo": ["orderBy"],
+                          "onDynamicFieldChange": {
+                            "function": "buildQuery",
+                            "params": [
+                              {
+                                "queryType": "select",
+                                "resultField": "query",
+                                "preparedResultField": "preparedStmt",
+                                "columnTypesField": "columnTypes",
+                                "columnNamesField": "columnNames"
+                              }
+                            ]
+                          }
+                        }
+
+                      ]
+                    },
+                    "parentField": "columns"
+                  },
+                  "enableCondition": [
+                    {
+                      "queryType": "offline"
+                    }
+                  ]
                 },
                 {
                   "type": "attribute",
@@ -154,7 +212,12 @@
                       ]
                     },
                     "parentField": "columns"
-                  }
+                  },
+                  "enableCondition": [
+                    {
+                      "queryType": "online"
+                    }
+                  ]
                 },
                 {
                   "type": "table",
@@ -215,6 +278,43 @@
                 {
                   "type": "attribute",
                   "value": {
+                    "name": "responseColumns",
+                    "displayName": "Response Columns",
+                    "inputType": "string",
+                    "defaultValue": "",
+                    "required": "false",
+                    "helpTip": "Comma separated list of columns",
+                    "hidden": false,
+                    "parentField": "table",
+                    "onValueChange": {
+                      "function": "buildQuery"
+                    }
+                  }
+                },
+                {
+                  "type": "attribute",
+                  "value": {
+                    "name": "orderBy",
+                    "displayName": "Order By",
+                    "inputType": "string",
+                    "defaultValue": "",
+                    "required": "false",
+                    "helpTip": "From which column to order the results",
+                    "hidden": false,
+                    "parentField": "table",
+                    "onValueChange": {
+                      "function": "buildQuery"
+                    }
+                  },
+                  "enableCondition": [
+                    {
+                      "queryType": "offline"
+                    }
+                  ]
+                },
+                {
+                  "type": "attribute",
+                  "value": {
                     "name": "orderBy",
                     "displayName": "Order By",
                     "inputType": "comboOrExpression",
@@ -227,7 +327,13 @@
                     "onValueChange": {
                       "function": "buildQuery"
                     }
-                  }
+                  },
+
+                  "enableCondition": [
+                    {
+                      "queryType": "online"
+                    }
+                  ]
                 },
                 {
                   "type": "attribute",
@@ -329,7 +435,7 @@
                     "inputType": "checkbox",
                     "defaultValue": "false",
                     "helpTip": "Replace the Message Body in Message Context with the output of the operation (This will remove the payload from the above variable).",
-                    "required": "true"
+                    "required": "false"
                   }
                 }
               ]
